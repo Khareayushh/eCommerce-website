@@ -30,6 +30,8 @@ app.get('/api', (req, res) => {
     res.status(200).json("message");
 })
 
+app.use('/api/user', require("./routes/userRoutes"));
+
 app.listen(port, () => {
     console.log(`server running on port: ${port}`);
 })
