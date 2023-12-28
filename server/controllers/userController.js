@@ -2,6 +2,7 @@ const User = require("../db/userSchema.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
+const dotenv = require("dotenv").config();
 
 const findByEmail = asyncHandler(async (email) => {
   const user = await User.findOne({ email });
@@ -70,19 +71,24 @@ const loginUser = asyncHandler(async (req, res) => {
     const user = await User.findOne({ email });
 
     if(user && (await bcrypt.compare(password, user.password))){
-        res.status(200).json("Valid User");
-        // const accessToken = jwt.sign(
-        //     {
-        //       user: {
-        //         username: user.username,
-        //         email: user.email,
-        //         id: user.id,
-        //       },
-        //     },
-        //     process.env.ACCESS_TOKEN_SECERT,
-        //     { expiresIn: "15m" }
-        //   );
-        //   res.status(200).json({ accessToken });
+        // res.status(200).json("Valid User");
+        const accessToken = jwt.sign(
+            {
+              user: {
+                username: user.username,
+                email: user.email,
+                id: user.id,
+              },
+            },
+            process.env.ACCESS_TOKEN_SECERT,
+            { expiresIn: "15m" }
+          );
+
+          res.cookie("token", accessToken, {
+            httpOnly: true,
+          })
+
+          res.status(200).json({ accessToken });
     }
     else{
         res.status(401).json({error: "Email or Password is not Valid"})
