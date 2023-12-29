@@ -32,6 +32,8 @@ app.get('/api', (req, res) => {
 
 app.use('/api/user', require("./routes/userRoutes"));
 
+app.use("/api/", require("./routes/productRoutes"));
+
 app.listen(port, () => {
     console.log(`server running on port: ${port}`);
 })
